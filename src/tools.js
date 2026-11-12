@@ -30,7 +30,7 @@ export const getCustomerDetails = tool({
 export const getCustomerOrders = tool({
   name: 'get_customer_orders',
   description:
-    'Find customers by (part of) their name and return their orders, order count and total spent.',
+    'Find customers by (part of) their name and return their orders (newest first), order count and total spent.',
   inputSchema: z.object({
     customer: z.string().describe('Full or partial customer name, for example "Kari"'),
   }),
@@ -43,7 +43,7 @@ export const getCustomerOrders = tool({
        LEFT JOIN orders o   ON o.customer_id = c.id
        LEFT JOIN products p ON p.id = o.product_id
        WHERE ${NAME_MATCH}
-       ORDER BY c.id, o.ordered_at`,
+       ORDER BY c.id, o.ordered_at DESC`,
       [customer],
     )
     if (rows.length === 0) return { error: `No customer matches "${customer}"` }

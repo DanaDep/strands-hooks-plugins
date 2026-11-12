@@ -6,8 +6,9 @@ import { addReadOnlyHooks } from './hooks/read-only.js'
 import { addRowLimitHooks } from './hooks/row-limit.js'
 import { addRoleCheckHooks } from './hooks/role-check.js'
 import { addApprovalHooks } from './hooks/approval.js'
+import { addPlaceholderHooks } from './hooks/placeholder.js'
 
-export function createAgent({ user, readOnly = true, maxRows = 10 }) {
+export function createAgent({ user, customers, readOnly = true, maxRows = 10 }) {
   const agent = new Agent({
     tools: dbTools,
     systemPrompt:
@@ -21,6 +22,7 @@ export function createAgent({ user, readOnly = true, maxRows = 10 }) {
   addRoleCheckHooks(agent, { user })
   addApprovalHooks(agent)
   addRowLimitHooks(agent, { maxRows })
+  addPlaceholderHooks(agent, { customers })
 
   return agent
 }
