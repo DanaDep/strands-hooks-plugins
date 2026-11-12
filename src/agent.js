@@ -1,6 +1,7 @@
 import { Agent } from '@strands-agents/sdk'
 import { dbTools } from './tools.js'
 import { addLoggingHooks } from './hooks/logging.js'
+import { addPrivacyHooks } from './hooks/privacy.js'
 
 export function createAgent() {
   const agent = new Agent({
@@ -11,6 +12,7 @@ export function createAgent() {
   })
 
   addLoggingHooks(agent)
+  addPrivacyHooks(agent)
 
   return agent
 }

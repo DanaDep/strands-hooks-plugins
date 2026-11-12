@@ -2,6 +2,31 @@ import { tool } from '@strands-agents/sdk'
 import { z } from 'zod'
 import { pool } from './db.js'
 
+const NAME_MATCH = `(c.first_name || ' ' || c.last_name) ILIKE '%' || $1 || '%'`
+
+export const getCustomerDetails = tool({
+  name: 'get_customer_details',
+  description:
+    'Find customers by (part of) their name and return their profile: name, contact details, ' +
+    'date of birth, address and country.',
+  inputSchema: z.object({
+    customer: z.string().describe('Full or partial customer name, for example "Anna"'),
+  }),
+  callback: async ({ customer }) => {
+    const { rows } = await pool.query(
+      `SELECT c.id, c.first_name AS "firstName", c.last_name AS "lastName", c.email, c.phone,
+              c.date_of_birth AS "dateOfBirth", c.street, c.postal_code AS "postalCode",
+              c.city, c.country, c.created_at AS "customerSince"
+       FROM customers c
+       WHERE ${NAME_MATCH}
+       ORDER BY c.id`,
+      [customer],
+    )
+    if (rows.length === 0) return { error: `No customer matches "${customer}"` }
+    return { customers: rows }
+  },
+})
+
 export const getCustomerOrders = tool({
   name: 'get_customer_orders',
   description:
@@ -11,13 +36,13 @@ export const getCustomerOrders = tool({
   }),
   callback: async ({ customer }) => {
     const { rows } = await pool.query(
-      `SELECT c.id AS customer_id, c.name, c.email, c.phone, c.country,
+      `SELECT c.id AS customer_id, c.first_name || ' ' || c.last_name AS name, c.country,
               o.id AS order_id, p.name AS product, o.quantity,
               o.quantity * p.price AS amount, o.ordered_at
        FROM customers c
        LEFT JOIN orders o   ON o.customer_id = c.id
        LEFT JOIN products p ON p.id = o.product_id
-       WHERE c.name ILIKE '%' || $1 || '%'
+       WHERE ${NAME_MATCH}
        ORDER BY c.id, o.ordered_at`,
       [customer],
     )
@@ -27,7 +52,7 @@ export const getCustomerOrders = tool({
     for (const r of rows) {
       if (!byCustomer.has(r.customer_id)) {
         byCustomer.set(r.customer_id, {
-          name: r.name, email: r.email, phone: r.phone, country: r.country,
+          name: r.name, country: r.country,
           orderCount: 0, totalSpent: 0, orders: [],
         })
       }
@@ -75,4 +100,4 @@ export const deleteOrder = tool({
   },
 })
 
-export const dbTools = [getCustomerOrders, getProductSales, deleteOrder]
+export const dbTools = [getCustomerDetails, getCustomerOrders, getProductSales, deleteOrder]
