@@ -12,7 +12,7 @@ configureLogging({
 })
 
 const question = process.argv.slice(2).join(' ') || 'Which product sold the most units?'
-const agent = createAgent()
+const agent = createAgent({ readOnly: process.env.READ_ONLY !== 'false' })
 
 try {
   console.log(`You: ${question}\n`)

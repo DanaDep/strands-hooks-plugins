@@ -2,8 +2,9 @@ import { Agent } from '@strands-agents/sdk'
 import { dbTools } from './tools.js'
 import { addLoggingHooks } from './hooks/logging.js'
 import { addPrivacyHooks } from './hooks/privacy.js'
+import { addReadOnlyHooks } from './hooks/read-only.js'
 
-export function createAgent() {
+export function createAgent({ readOnly = true } = {}) {
   const agent = new Agent({
     tools: dbTools,
     systemPrompt:
@@ -13,6 +14,7 @@ export function createAgent() {
 
   addLoggingHooks(agent)
   addPrivacyHooks(agent)
+  if (readOnly) addReadOnlyHooks(agent)
 
   return agent
 }
