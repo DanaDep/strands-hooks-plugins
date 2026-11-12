@@ -5,6 +5,7 @@ import { addPrivacyHooks } from './hooks/privacy.js'
 import { addReadOnlyHooks } from './hooks/read-only.js'
 import { addRowLimitHooks } from './hooks/row-limit.js'
 import { addRoleCheckHooks } from './hooks/role-check.js'
+import { addApprovalHooks } from './hooks/approval.js'
 
 export function createAgent({ user, readOnly = true, maxRows = 10 }) {
   const agent = new Agent({
@@ -18,6 +19,7 @@ export function createAgent({ user, readOnly = true, maxRows = 10 }) {
   addPrivacyHooks(agent)
   if (readOnly) addReadOnlyHooks(agent)
   addRoleCheckHooks(agent, { user })
+  addApprovalHooks(agent)
   addRowLimitHooks(agent, { maxRows })
 
   return agent

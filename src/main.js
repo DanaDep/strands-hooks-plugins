@@ -1,4 +1,5 @@
-import { configureLogging } from '@strands-agents/sdk'
+import { createInterface } from 'node:readline/promises'
+import { configureLogging, InterruptResponseContent } from '@strands-agents/sdk'
 import { createAgent } from './agent.js'
 import { pool } from './db.js'
 import { findUser } from './users.js'
@@ -11,6 +12,13 @@ configureLogging({
   },
   error: (...args) => console.error(...args),
 })
+
+async function ask(prompt) {
+  const terminal = createInterface({ input: process.stdin, output: process.stdout })
+  const answer = await terminal.question(prompt)
+  terminal.close()
+  return answer.trim().toLowerCase()
+}
 
 const question = process.argv.slice(2).join(' ') || 'Which product sold the most units?'
 const user = await findUser(process.env.CURRENT_USER)
@@ -28,7 +36,16 @@ const agent = createAgent({
 
 try {
   console.log(`You (${user.firstName} ${user.lastName}, ${user.role}): ${question}\n`)
-  await agent.invoke(question)
+  let result = await agent.invoke(question)
+
+  while (result.stopReason === 'interrupt') {
+    const responses = []
+    for (const interrupt of result.interrupts) {
+      const answer = await ask(`\n${interrupt.reason}\nApprove? (yes/no): `)
+      responses.push(new InterruptResponseContent({ interruptId: interrupt.id, response: answer }))
+    }
+    result = await agent.invoke(responses)
+  }
 } finally {
   await pool.end()
 }
