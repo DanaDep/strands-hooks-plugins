@@ -3,7 +3,6 @@ import { configureLogging, InterruptResponseContent } from '@strands-agents/sdk'
 import { createAgent } from './agent.js'
 import { pool } from './db.js'
 import { findUser } from './users.js'
-import { loadCustomerNames } from './customers.js'
 
 configureLogging({
   debug: () => {},
@@ -31,7 +30,6 @@ if (!user) {
 
 const agent = createAgent({
   user,
-  customers: await loadCustomerNames(),
   readOnly: process.env.READ_ONLY !== 'false',
   maxRows: Number(process.env.MAX_ROWS ?? 10),
 })

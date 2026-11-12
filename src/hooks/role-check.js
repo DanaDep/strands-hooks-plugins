@@ -10,7 +10,7 @@ export function addRoleCheckHooks(agent, { user }) {
   agent.addHook(BeforeToolCallEvent, (event) => {
     const { name } = event.toolUse
     const allowed = ALLOWED_ROLES[name]
-    if (!allowed || allowed.includes(user.role)) return
+    if (!allowed || allowed.includes(user.role) || event.cancel) return
 
     event.cancel = `${name} is blocked: ${user.username} has role "${user.role}", ` +
       `but this tool needs one of: ${allowed.join(', ')}.`
