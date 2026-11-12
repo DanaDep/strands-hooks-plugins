@@ -1,0 +1,26 @@
+{
+  "name": "strands-hooks-plugins",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanaDep/strands-hooks-plugins.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanaDep/strands-hooks-plugins/issues"
+  },
+  "homepage": "https://github.com/DanaDep/strands-hooks-plugins#readme",
+  "type": "module",
+  "dependencies": {
+    "@strands-agents/sdk": "^1.24.0",
+    "pg": "^8.23.1",
+    "zod": "^4.6.7"
+  }
+}

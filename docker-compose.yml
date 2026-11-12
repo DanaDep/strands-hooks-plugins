@@ -1,0 +1,18 @@
+# A small Postgres database for learning. Data lives in a named volume.
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: strands-hooks-db
+    environment:
+      POSTGRES_USER: shop
+      POSTGRES_PASSWORD: shop
+      POSTGRES_DB: shop
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - strands-hooks-db-data:/var/lib/postgresql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+
+volumes:
+  strands-hooks-db-data:
+    name: strands-hooks-db-data
