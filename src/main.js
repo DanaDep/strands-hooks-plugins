@@ -12,7 +12,10 @@ configureLogging({
 })
 
 const question = process.argv.slice(2).join(' ') || 'Which product sold the most units?'
-const agent = createAgent({ readOnly: process.env.READ_ONLY !== 'false' })
+const agent = createAgent({
+  readOnly: process.env.READ_ONLY !== 'false',
+  maxRows: Number(process.env.MAX_ROWS ?? 10),
+})
 
 try {
   console.log(`You: ${question}\n`)

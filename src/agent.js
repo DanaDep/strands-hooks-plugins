@@ -3,8 +3,9 @@ import { dbTools } from './tools.js'
 import { addLoggingHooks } from './hooks/logging.js'
 import { addPrivacyHooks } from './hooks/privacy.js'
 import { addReadOnlyHooks } from './hooks/read-only.js'
+import { addRowLimitHooks } from './hooks/row-limit.js'
 
-export function createAgent({ readOnly = true } = {}) {
+export function createAgent({ readOnly = true, maxRows = 10 } = {}) {
   const agent = new Agent({
     tools: dbTools,
     systemPrompt:
@@ -15,6 +16,7 @@ export function createAgent({ readOnly = true } = {}) {
   addLoggingHooks(agent)
   addPrivacyHooks(agent)
   if (readOnly) addReadOnlyHooks(agent)
+  addRowLimitHooks(agent, { maxRows })
 
   return agent
 }
