@@ -44,3 +44,16 @@ INSERT INTO products (name, price) VALUES
 INSERT INTO orders (customer_id, product_id, quantity, ordered_at)
 SELECT (g % 5) + 1, (g % 4) + 1, 1 + (g % 4) + (g % 3), DATE '2026-01-01' + g
 FROM generate_series(1, 60) AS g;
+
+CREATE TABLE users (
+  id         SERIAL PRIMARY KEY,
+  username   TEXT NOT NULL UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name  TEXT NOT NULL,
+  email      TEXT NOT NULL UNIQUE,
+  role       TEXT NOT NULL CHECK (role IN ('admin', 'viewer'))
+);
+
+INSERT INTO users (username, first_name, last_name, email, role) VALUES
+  ('alice', 'Alice', 'Berg',  'alice.berg@shop.example', 'admin'),
+  ('bob',   'Bob',   'Lunde', 'bob.lunde@shop.example',  'viewer');
