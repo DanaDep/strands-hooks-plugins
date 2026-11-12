@@ -1,9 +1,8 @@
--- Sample shop data. Runs only the first time the database is created.
 CREATE TABLE customers (
   id         SERIAL PRIMARY KEY,
   name       TEXT NOT NULL,
-  email      TEXT NOT NULL,   -- personal data (used later by the privacy hook)
-  phone      TEXT,            -- personal data
+  email      TEXT NOT NULL,
+  phone      TEXT,
   country    TEXT NOT NULL,
   created_at DATE NOT NULL DEFAULT CURRENT_DATE
 );
@@ -35,7 +34,6 @@ INSERT INTO products (name, price) VALUES
   ('Desk lamp',  499.00),
   ('Headphones', 899.00);
 
--- 60 orders spread over customers and products, so we have enough rows to test the row limit later.
 INSERT INTO orders (customer_id, product_id, quantity, ordered_at)
-SELECT (g % 5) + 1, (g % 4) + 1, (g % 3) + 1, DATE '2026-01-01' + g
+SELECT (g % 5) + 1, (g % 4) + 1, 1 + (g % 4) + (g % 3), DATE '2026-01-01' + g
 FROM generate_series(1, 60) AS g;
